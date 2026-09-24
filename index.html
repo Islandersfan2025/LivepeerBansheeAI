@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Banshee — Creator Studio</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Roboto+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"
+  ></script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/tus-js-client@4/dist/tus.min.js"
+  ></script>
+
+  <style>
+    :root {
+      --cyan:#04d9ff;
+      --pink:#ff2f86;
+      --orange:#ff6a20;
+      --purple:#7a37ff;
+      --green:#65ff6a;
+      --yellow:#ffd441;
+      --black:#050505;
+      --panel:#0b0b0b;
+    }
+
+    * {
+      box-sizing:border-box;
+    }
+
+    html {
+      scroll-behavior:smooth;
+    }
+
+    body {
+      margin:0;
+      color:#fff;
+      background:
+        radial-gradient(
+          circle at 10% 20%,
+          rgba(122,55,255,.15),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 90% 12%,
+          rgba(4,217,255,.12),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 70% 70%,
+          rgba(255,47,134,.11),
+          transparent 25%
+        ),
+        var(--black);
+
+      font-family:"Roboto Mono",monospace;
+    }
+
+    body::before {
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
+
+      background:
+        repeating-linear-gradient(
+          -12deg,
+          transparent 0 18px,
+          rgba(255,255,255,.018) 19px 20px
+        );
+    }
+
+    /* NAV */
+
+    .site-nav {
+      background:rgba(5,5,5,.92);
+      border-bottom:1px solid rgba(255,255,255,.1);
+      backdrop-filter:blur(15px);
+    }
+
+    .navbar-brand {
+      font-family:"Permanent Marker",cursive;
+      font-size:1.9rem;
+      color:var(--cyan)!important;
+      text-shadow:3px 3px #000;
+    }
+
+    .nav-link {
+      color:#eee!important;
+      text-transform:uppercase;
+      font-weight:700;
+      font-size:.82rem;
+    }
+
+    .nav-link:hover {
+      color:var(--pink)!important;
+    }
+
+    .wallet-pill {
+      display:inline-flex;
+      align-items:center;
+      padding:9px 13px;
+
+      border:1px solid var(--pink);
+      border-radius:10px;
+
+      background:#080808;
+      color:#fff;
+
+      font-size:.8rem;
+      font-weight:700;
+      text-decoration:none;
+
+      box-shadow:
+        0 0 15px rgba(255,47,134,.35);
+    }
+
+    /* HERO */
+
+    .hero {
+      min-height:560px;
+      padding:130px 0 60px;
+      display:flex;
+      align-items:center;
+    }
+
+    .hero-panel {
+      max-width:900px;
+
+      padding:30px;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(0,0,0,.88),
+          rgba(0,0,0,.3)
+        );
+
+      border-left:5px solid var(--cyan);
+
+      box-shadow:
+        12px 12px 0 rgba(0,0,0,.6);
+    }
+
+    .hero-badge,
+    .chip {
+      display:inline-block;
+
+      padding:7px 12px;
+
+      border:
+        1px solid rgba(255,255,255,.2);
+
+      border-radius:999px;
+
+      background:
+        rgba(0,0,0,.72);
+
+      font-size:.7rem;
+      font-weight:700;
+
+      text-transform:uppercase;
+    }
+
+    .powered {
+      border-color:
+        rgba(101,255,106,.5);
+
+      color:
+        var(--green);
+
+      box-shadow:
+        0 0 18px rgba(101,255,106,.12);
+    }
+
+    .hero-title {
+      margin:16px 0;
+
+      font-family:
+        "Permanent Marker",
+        cursive;
+
+      line-height:.85;
+
+      text-transform:uppercase;
+    }
+
+    .hero-title .banshee {
+      display:block;
+
+      font-size:
+        clamp(
+          4.6rem,
+          10vw,
+          9.5rem
+        );
+
+      color:var(--cyan);
+
+      -webkit-text-stroke:
+        2px #050505;
+
+      text-shadow:
+        8px 8px #000;
+    }
+
+    .hero-title .studio {
+      display:block;
+
+      font-size:
+        clamp(
+          2.7rem,
+          6vw,
+          5.8rem
+        );
+
+      color:var(--pink);
+
+      -webkit-text-stroke:
+        2px #050505;
+
+      text-shadow:
+        6px 6px #000;
+    }
+
+    .hero-copy {
+      max-width:720px;
+      font-weight:700;
+    }
+
+    /* BUTTONS */
+
+    .btn-spray,
+    .btn-outline-spray {
+      padding:12px 20px;
+
+      border-radius:8px;
+
+      font-weight:700;
+
+      text-transform:uppercase;
+
+      transition:.2s;
+    }
+
+    .btn-spray {
+      border:0;
+
+      background:
+        var(--pink);
+
+      color:#fff;
+
+      box-shadow:
+        0 0 18px rgba(255,47,134,.45),
+        5px 5px #000;
+    }
+
+    .btn-spray:hover {
+      background:
+        var(--cyan);
+
+      color:#000;
+
+      transform:
+        translateY(-2px);
+    }
+
+    .btn-outline-spray {
+      border:
+        2px solid var(--cyan);
+
+      background:#080808;
+
+      color:#fff;
+    }
+
+    .btn-outline-spray:hover {
+      background:
+        var(--cyan);
+
+      color:#000;
+    }
+
+    .btn-stop {
+      border-color:
+        var(--pink);
+    }
+
+    /* STUDIO */
+
+    .studio-section {
+      padding:
+        70px 0;
+    }
+
+    .section-title {
+      font-family:
+        "Bebas Neue";
+
+      font-size:
+        clamp(
+          2.3rem,
+          4vw,
+          3.6rem
+        );
+
+      letter-spacing:
+        1.5px;
+
+      text-transform:
+        uppercase;
+
+      text-shadow:
+        4px 4px #000;
+    }
+
+    .studio-card {
+      padding:25px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.13);
+
+      border-radius:
+        16px;
+
+      background:
+        rgba(7,7,7,.92);
+
+      box-shadow:
+        8px 8px #000;
+    }
+
+    /* CAMERA */
+
+    .camera-shell {
+      position:relative;
+
+      overflow:hidden;
+
+      margin-top:22px;
+
+      border:
+        1px solid #292929;
+
+      border-radius:
+        14px;
+
+      background:#000;
+    }
+
+    #recordingPreview {
+      display:block;
+
+      width:100%;
+
+      min-height:
+        390px;
+
+      max-height:
+        520px;
+
+      background:#000;
+
+      object-fit:
+        contain;
+    }
+
+    .camera-status {
+      position:absolute;
+
+      top:14px;
+      left:14px;
+
+      padding:
+        7px 10px;
+
+      border-radius:
+        999px;
+
+      background:
+        rgba(0,0,0,.8);
+
+      border:
+        1px solid
+        rgba(255,255,255,.2);
+
+      font-size:
+        .67rem;
+
+      font-weight:
+        700;
+    }
+
+    .recording .camera-status {
+      color:
+        var(--pink);
+
+      border-color:
+        var(--pink);
+    }
+
+    .record-dot {
+      display:inline-block;
+
+      width:7px;
+      height:7px;
+
+      margin-right:5px;
+
+      border-radius:
+        50%;
+
+      background:
+        var(--pink);
+    }
+
+    /* PROGRESS */
+
+    .process-panel {
+      display:none;
+
+      margin-top:22px;
+
+      padding:18px;
+
+      border:
+        1px solid
+        rgba(122,55,255,.4);
+
+      border-radius:
+        12px;
+
+      background:
+        rgba(122,55,255,.07);
+    }
+
+    .process-panel.show {
+      display:block;
+    }
+
+    .steps {
+      display:grid;
+
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap:8px;
+
+      margin-top:16px;
+    }
+
+    .step {
+      padding:
+        12px 7px;
+
+      border:
+        1px solid #242424;
+
+      border-radius:
+        9px;
+
+      background:
+        #090909;
+
+      color:
+        #666;
+
+      font-size:
+        .63rem;
+
+      text-align:
+        center;
+
+      text-transform:
+        uppercase;
+    }
+
+    .step.active {
+      border-color:
+        var(--cyan);
+
+      color:#fff;
+    }
+
+    .step.complete {
+      border-color:
+        var(--green);
+
+      color:
+        var(--green);
+    }
+
+    .step-number {
+      display:block;
+
+      font-family:
+        "Bebas Neue";
+
+      font-size:
+        1.3rem;
+    }
+
+    .upload-progress {
+      height:7px;
+
+      margin-top:16px;
+
+      background:#171717;
+    }
+
+    .upload-progress .progress-bar {
+      background:
+        linear-gradient(
+          90deg,
+          var(--purple),
+          var(--cyan),
+          var(--green)
+        );
+    }
+
+    /* FORM */
+
+    .form-control,
+    .form-select {
+      background:
+        #0b0b0b!important;
+
+      color:
+        #fff!important;
+
+      border-color:
+        #292929!important;
+    }
+
+    .form-label {
+      color:#999;
+
+      font-size:.7rem;
+
+      text-transform:
+        uppercase;
+    }
+
+    .form-control::placeholder {
+      color:#555;
+    }
+
+    /* RELEASE RESULT */
+
+    .release-result {
+      display:none;
+
+      padding:20px;
+
+      margin-top:22px;
+
+      border:
+        1px solid
+        rgba(101,255,106,.45);
+
+      border-radius:
+        12px;
+
+      background:
+        rgba(101,255,106,.055);
+    }
+
+    .release-result.show {
+      display:block;
+    }
+
+    .result-title {
+      color:
+        var(--green);
+
+      font-family:
+        "Bebas Neue";
+
+      font-size:
+        1.8rem;
+    }
+
+    .hash {
+      overflow-wrap:
+        anywhere;
+
+      color:#999;
+
+      font-size:
+        .67rem;
+    }
+
+    /* INFO */
+
+    .info-panel {
+      height:100%;
+
+      padding:25px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.13);
+
+      border-radius:
+        16px;
+
+      background:
+        rgba(7,7,7,.9);
+
+      box-shadow:
+        8px 8px #000;
+    }
+
+    .flow-item {
+      padding:
+        15px 0;
+
+      border-bottom:
+        1px solid #1e1e1e;
+    }
+
+    .flow-item:last-child {
+      border-bottom:0;
+    }
+
+    .flow-number {
+      color:
+        var(--cyan);
+
+      font-family:
+        "Bebas Neue";
+
+      font-size:
+        1.6rem;
+    }
+
+    /* TOAST */
+
+    .toast-panel {
+      position:fixed;
+
+      z-index:100;
+
+      top:82px;
+      left:50%;
+
+      min-width:
+        300px;
+
+      padding:
+        13px 18px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.2);
+
+      border-radius:
+        10px;
+
+      background:
+        rgba(0,0,0,.92);
+
+      color:#fff;
+
+      font-weight:
+        700;
+
+      text-align:
+        center;
+
+      text-transform:
+        uppercase;
+
+      opacity:0;
+
+      pointer-events:none;
+
+      transform:
+        translateX(-50%)
+        translateY(-12px);
+
+      transition:.2s;
+    }
+
+    .toast-panel.show {
+      opacity:1;
+
+      transform:
+        translateX(-50%)
+        translateY(0);
+    }
+
+    @media(max-width:767px) {
+      .steps {
+        grid-template-columns:
+          repeat(2,1fr);
+      }
+
+      #recordingPreview {
+        min-height:
+          250px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg fixed-top site-nav">
+
+  <div class="container">
+
+    <a
+      class="navbar-brand"
+      href="#home"
+    >
+      Banshee
+    </a>
+
+    <button
+      class="navbar-toggler bg-light"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navMenu"
+    >
+      <span
+        class="navbar-toggler-icon"
+      ></span>
+    </button>
+
+    <div
+      class="collapse navbar-collapse"
+      id="navMenu"
+    >
+
+      <ul
+        class="navbar-nav ms-auto align-items-lg-center gap-lg-3"
+      >
+
+        <li class="nav-item">
+
+          <a
+            class="nav-link"
+            href="#create"
+          >
+            Create
+          </a>
+
+        </li>
+
+        <li class="nav-item">
+
+          <a
+            class="nav-link"
+            href="#how"
+          >
+            How It Works
+          </a>
+
+        </li>
+
+        <li class="nav-item">
+
+          <a
+            class="wallet-pill"
+            id="walletButton"
+            href="#"
+            onclick="
+              connectWallet();
+              return false;
+            "
+          >
+            Connect Wallet
+          </a>
+
+        </li>
+
+      </ul>
+
+    </div>
+
+  </div>
+
+</nav>
+
+
+<main>
+
+  <!-- HERO -->
+
+  <header
+    class="hero"
+    id="home"
+  >
+
+    <div class="container">
+
+      <div class="hero-panel">
+
+        <span
+          class="hero-badge powered"
+        >
+          ● Powered by Livepeer AI
+        </span>
+
+        <h1 class="hero-title">
+
+          <span class="banshee">
+            Banshee
+          </span>
+
+          <span class="studio">
+            Creator Studio
+          </span>
+
+        </h1>
+
+        <p class="hero-copy">
+          Record your performance.
+          Create a limited music edition.
+          Launch your market.
+        </p>
+
+        <div
+          class="d-flex flex-wrap gap-3 mt-4"
+        >
+
+          <button
+            class="btn-spray"
+            onclick="
+              document
+                .querySelector('#create')
+                .scrollIntoView()
+            "
+          >
+            Record Performance
+          </button>
+
+          <button
+            class="btn-outline-spray"
+            onclick="
+              document
+                .querySelector('#how')
+                .scrollIntoView()
+            "
+          >
+            How It Works
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- CREATOR STUDIO -->
+
+  <section
+    class="studio-section"
+    id="create"
+  >
+
+    <div class="container">
+
+      <div class="row g-4">
+
+        <div class="col-lg-8">
+
+          <div class="studio-card">
+
+            <div
+              class="d-flex flex-wrap justify-content-between gap-3"
+            >
+
+              <div>
+
+                <span class="chip">
+                  Creator Studio
+                </span>
+
+                <h2
+                  class="section-title mt-2 mb-1"
+                >
+                  Record Your Performance
+                </h2>
+
+                <p
+                  class="text-secondary mb-0"
+                >
+                  Record a video performance
+                  and release it directly through Banshee.
+                </p>
+
+              </div>
+
+              <span
+                class="chip powered align-self-start"
+              >
+                Powered by Livepeer AI
+              </span>
+
+            </div>
+
+
+            <!-- CAMERA -->
+
+            <div
+              class="camera-shell"
+              id="cameraShell"
+            >
+
+              <video
+                id="recordingPreview"
+                playsinline
+              ></video>
+
+              <div
+                class="camera-status"
+                id="cameraStatus"
+              >
+                CAMERA READY
+              </div>
+
+            </div>
+
+
+            <div
+              class="d-flex flex-wrap gap-3 mt-3"
+            >
+
+              <button
+                id="startButton"
+                class="btn-outline-spray"
+                onclick="startRecording()"
+              >
+                ● Start Recording
+              </button>
+
+              <button
+                id="stopButton"
+                class="btn-outline-spray btn-stop"
+                onclick="stopRecording()"
+                disabled
+              >
+                ■ Stop Recording
+              </button>
+
+              <label
+                class="btn-outline-spray"
+                style="cursor:pointer"
+              >
+                Choose Video
+
+                <input
+                  id="videoFileInput"
+                  type="file"
+                  accept="video/*"
+                  hidden
+                  onchange="selectVideoFile(event)"
+                >
+
+              </label>
+
+            </div>
+
+
+            <!-- RELEASE CONFIG -->
+
+            <hr
+              class="border-secondary my-4"
+            >
+
+            <span class="chip">
+              Release Details
+            </span>
+
+            <div
+              class="row g-3 mt-1"
+            >
+
+              <div class="col-md-7">
+
+                <label class="form-label">
+                  Release title
+                </label>
+
+                <input
+                  id="launchTitle"
+                  class="form-control"
+                  placeholder="Midnight Run — Live"
+                >
+
+              </div>
+
+              <div class="col-md-5">
+
+                <label class="form-label">
+                  Release type
+                </label>
+
+                <input
+                  class="form-control"
+                  value="PERFORMANCE"
+                  disabled
+                >
+
+              </div>
+
+              <div class="col-md-4">
+
+                <label class="form-label">
+                  Editions
+                </label>
+
+                <input
+                  id="launchSupply"
+                  class="form-control"
+                  type="number"
+                  value="100"
+                  min="1"
+                >
+
+              </div>
+
+              <div class="col-md-4">
+
+                <label class="form-label">
+                  Launch price
+                </label>
+
+                <input
+                  id="launchPrice"
+                  class="form-control"
+                  value="10.00"
+                >
+
+              </div>
+
+              <div class="col-md-4">
+
+                <label class="form-label">
+                  Artist royalty
+                </label>
+
+                <div class="input-group">
+
+                  <input
+                    id="artistRoyalty"
+                    class="form-control"
+                    type="number"
+                    value="10"
+                    min="0"
+                    max="100"
+                  >
+
+                  <span
+                    class="input-group-text bg-dark text-white border-secondary"
+                  >
+                    %
+                  </span>
+
+                </div>
+
+              </div>
+
+              <div class="col-12">
+
+                <label class="form-label">
+                  Description
+                </label>
+
+                <textarea
+                  id="releaseDescription"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Tell collectors about this performance..."
+                ></textarea>
+
+              </div>
+
+            </div>
+
+
+            <!-- PROCESS -->
+
+            <div
+              class="process-panel"
+              id="processPanel"
+            >
+
+              <div
+                class="d-flex justify-content-between align-items-center"
+              >
+
+                <div>
+
+                  <span class="chip powered">
+                    The Banshee
+                  </span>
+
+                  <div
+                    class="small text-secondary mt-2"
+                    id="processMessage"
+                  >
+                    Preparing release...
+                  </div>
+
+                </div>
+
+                <span
+                  class="chip"
+                >
+                  Powered by Livepeer AI
+                </span>
+
+              </div>
+
+
+              <div class="steps">
+
+                <div
+                  class="step"
+                  id="step1"
+                >
+                  <span class="step-number">
+                    01
+                  </span>
+
+                  Upload
+                </div>
+
+                <div
+                  class="step"
+                  id="step2"
+                >
+                  <span class="step-number">
+                    02
+                  </span>
+
+                  Process
+                </div>
+
+                <div
+                  class="step"
+                  id="step3"
+                >
+                  <span class="step-number">
+                    03
+                  </span>
+
+                  Create
+                </div>
+
+                <div
+                  class="step"
+                  id="step4"
+                >
+                  <span class="step-number">
+                    04
+                  </span>
+
+                  Launch
+                </div>
+
+              </div>
+
+
+              <div
+                class="progress upload-progress"
+              >
+
+                <div
+                  id="uploadProgress"
+                  class="progress-bar"
+                  style="width:0%"
+                ></div>
+
+              </div>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div
+              class="release-result"
+              id="releaseResult"
+            >
+
+              <div class="result-title">
+                Release Created
+              </div>
+
+              <p class="mb-2">
+                Your performance is now
+                a Banshee music asset.
+              </p>
+
+              <div
+                class="hash"
+                id="releaseTokenId"
+              ></div>
+
+              <div
+                class="hash mt-1"
+                id="releaseTxHash"
+              ></div>
+
+            </div>
+
+
+            <button
+              id="createButton"
+              class="btn-spray mt-4"
+              onclick="processBansheeRecording()"
+              disabled
+            >
+              Create + Launch
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- RIGHT -->
+
+        <div
+          class="col-lg-4"
+          id="how"
+        >
+
+          <div class="info-panel">
+
+            <span class="chip powered">
+              Powered by Livepeer AI
+            </span>
+
+            <h3
+              class="section-title fs-2 mt-3"
+            >
+              Performance To Market
+            </h3>
+
+            <p class="text-secondary">
+              Turn a recorded performance
+              into an exclusive Banshee release
+              in one workflow.
+            </p>
+
+
+            <div class="flow-item">
+
+              <div class="flow-number">
+                01
+              </div>
+
+              <strong>
+                Record
+              </strong>
+
+              <p
+                class="small text-secondary mb-0"
+              >
+                Record directly in Banshee
+                or choose an existing video.
+              </p>
+
+            </div>
+
+
+            <div class="flow-item">
+
+              <div class="flow-number">
+                02
+              </div>
+
+              <strong>
+                Process
+              </strong>
+
+              <p
+                class="small text-secondary mb-0"
+              >
+                Your recording is uploaded
+                and prepared for release.
+              </p>
+
+            </div>
+
+
+            <div class="flow-item">
+
+              <div class="flow-number">
+                03
+              </div>
+
+              <strong>
+                Create
+              </strong>
+
+              <p
+                class="small text-secondary mb-0"
+              >
+                Approve the limited ERC-1155
+                performance edition with your wallet.
+              </p>
+
+            </div>
+
+
+            <div class="flow-item">
+
+              <div class="flow-number">
+                04
+              </div>
+
+              <strong>
+                Launch
+              </strong>
+
+              <p
+                class="small text-secondary mb-0"
+              >
+                The performance enters
+                the Banshee marketplace.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<div
+  class="toast-panel"
+  id="toastPanel"
+>
+  Ready
+</div>
+
+
+<script src="./config.js"></script>
+
+
+<script>
+  let mediaRecorder = null;
+
+  let recordedChunks = [];
+
+  let recordedFile = null;
+
+  let cameraStream = null;
+
+  let walletProvider = null;
+
+  let walletSigner = null;
+
+  let walletAddress = null;
+
+  let toastTimer = null;
+
+
+  async function connectWallet() {
+    try {
+      if (!window.ethereum) {
+        throw new Error(
+          "Wallet not found"
+        );
+      }
+
+      await window.ethereum.request({
+        method:
+          "eth_requestAccounts"
+      });
+
+      walletProvider =
+        new ethers.BrowserProvider(
+          window.ethereum
+        );
+
+      walletSigner =
+        await walletProvider.getSigner();
+
+      walletAddress =
+        await walletSigner.getAddress();
+
+      document.getElementById(
+        "walletButton"
+      ).textContent =
+        walletAddress.slice(0,6) +
+        "..." +
+        walletAddress.slice(-4);
+
+      showToast(
+        "Wallet connected"
+      );
+
+      return walletAddress;
+
+    } catch (error) {
+      console.error(error);
+
+      showToast(
+        error.message
+      );
+
+      return null;
+    }
+  }
+
+
+  function getSupportedMimeType() {
+    const types = [
+      "video/webm;codecs=vp9,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm"
+    ];
+
+    for (const type of types) {
+      if (
+        MediaRecorder.isTypeSupported(
+          type
+        )
+      ) {
+        return type;
+      }
+    }
+
+    return "";
+  }
+
+
+  async function startRecording() {
+    try {
+      cameraStream =
+        await navigator.mediaDevices
+          .getUserMedia({
+            video:true,
+            audio:true
+          });
+
+      const preview =
+        document.getElementById(
+          "recordingPreview"
+        );
+
+      preview.src =
+        "";
+
+      preview.srcObject =
+        cameraStream;
+
+      preview.muted =
+        true;
+
+      preview.controls =
+        false;
+
+      await preview.play();
+
+      recordedChunks =
+        [];
+
+      const mimeType =
+        getSupportedMimeType();
+
+      const options =
+        mimeType
+          ? { mimeType }
+          : undefined;
+
+      mediaRecorder =
+        new MediaRecorder(
+          cameraStream,
+          options
+        );
+
+      mediaRecorder.ondataavailable =
+        event => {
+          if (
+            event.data &&
+            event.data.size > 0
+          ) {
+            recordedChunks.push(
+              event.data
+            );
+          }
+        };
+
+      mediaRecorder.onstop =
+        createRecordedFile;
+
+      mediaRecorder.start(
+        1000
+      );
+
+      document
+        .getElementById(
+          "cameraShell"
+        )
+        .classList.add(
+          "recording"
+        );
+
+      document.getElementById(
+        "cameraStatus"
+      ).innerHTML =
+        '<span class="record-dot"></span> RECORDING';
+
+      document.getElementById(
+        "startButton"
+      ).disabled =
+        true;
+
+      document.getElementById(
+        "stopButton"
+      ).disabled =
+        false;
+
+      showToast(
+        "Recording started"
+      );
+
+    } catch (error) {
+      console.error(error);
+
+      showToast(
+        error.message ||
+        "Camera unavailable"
+      );
+    }
+  }
+
+
+  function stopRecording() {
+    if (
+      !mediaRecorder ||
+      mediaRecorder.state ===
+        "inactive"
+    ) {
+      return;
+    }
+
+    mediaRecorder.stop();
+
+    cameraStream
+      ?.getTracks()
+      .forEach(
+        track =>
+          track.stop()
+      );
+
+    document
+      .getElementById(
+        "cameraShell"
+      )
+      .classList.remove(
+        "recording"
+      );
+
+    document.getElementById(
+      "cameraStatus"
+    ).textContent =
+      "RECORDING READY";
+
+    document.getElementById(
+      "startButton"
+    ).disabled =
+      false;
+
+    document.getElementById(
+      "stopButton"
+    ).disabled =
+      true;
+  }
+
+
+  function createRecordedFile() {
+    const mimeType =
+      mediaRecorder?.mimeType ||
+      "video/webm";
+
+    const blob =
+      new Blob(
+        recordedChunks,
+        {
+          type:mimeType
+        }
+      );
+
+    recordedFile =
+      new File(
+        [blob],
+        `banshee-${Date.now()}.webm`,
+        {
+          type:mimeType
+        }
+      );
+
+    loadRecordedPreview(
+      recordedFile
+    );
+
+    showToast(
+      "Recording ready"
+    );
+  }
+
+
+  function selectVideoFile(event) {
+    const file =
+      event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (
+      !file.type.startsWith(
+        "video/"
+      )
+    ) {
+      showToast(
+        "Select a video file"
+      );
+
+      return;
+    }
+
+    recordedFile =
+      file;
+
+    loadRecordedPreview(
+      file
+    );
+
+    document.getElementById(
+      "cameraStatus"
+    ).textContent =
+      "VIDEO READY";
+
+    showToast(
+      "Video selected"
+    );
+  }
+
+
+  function loadRecordedPreview(file) {
+    const preview =
+      document.getElementById(
+        "recordingPreview"
+      );
+
+    preview.srcObject =
+      null;
+
+    preview.src =
+      URL.createObjectURL(
+        file
+      );
+
+    preview.controls =
+      true;
+
+    preview.muted =
+      false;
+
+    document.getElementById(
+      "createButton"
+    ).disabled =
+      false;
+  }
+
+
+  function setStep(
+    number,
+    state
+  ) {
+    const element =
+      document.getElementById(
+        `step${number}`
+      );
+
+    element.classList.remove(
+      "active",
+      "complete"
+    );
+
+    if (state) {
+      element.classList.add(
+        state
+      );
+    }
+  }
+
+
+  function setProgress(
+    percent
+  ) {
+    document.getElementById(
+      "uploadProgress"
+    ).style.width =
+      `${percent}%`;
+  }
+
+
+  function setProcessMessage(
+    message
+  ) {
+    document.getElementById(
+      "processMessage"
+    ).textContent =
+      message;
+  }
+
+
+  async function processBansheeRecording() {
+    try {
+      if (!recordedFile) {
+        throw new Error(
+          "Record or choose a video first"
+        );
+      }
+
+      const title =
+        document.getElementById(
+          "launchTitle"
+        ).value.trim();
+
+      const supply =
+        Number(
+          document.getElementById(
+            "launchSupply"
+          ).value
+        );
+
+      const price =
+        document.getElementById(
+          "launchPrice"
+        ).value;
+
+      if (!title) {
+        throw new Error(
+          "Enter a release title"
+        );
+      }
+
+      if (
+        !Number.isInteger(supply) ||
+        supply <= 0
+      ) {
+        throw new Error(
+          "Enter a valid edition size"
+        );
+      }
+
+      if (!walletAddress) {
+        const connected =
+          await connectWallet();
+
+        if (!connected) {
+          return;
+        }
+      }
+
+      document.getElementById(
+        "processPanel"
+      ).classList.add(
+        "show"
+      );
+
+      document.getElementById(
+        "releaseResult"
+      ).classList.remove(
+        "show"
+      );
+
+      /* STEP 1 */
+
+      setStep(
+        1,
+        "active"
+      );
+
+      setProcessMessage(
+        "Creating secure upload..."
+      );
+
+      const uploadResponse =
+        await fetch(
+          `${window.BANSHEE_CONFIG.apiBase}/api/video/upload`,
+          {
+            method:"POST",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:JSON.stringify({
+              name:
+                recordedFile.name
+            })
+          }
+        );
+
+      const upload =
+        await uploadResponse.json();
+
+      if (!uploadResponse.ok) {
+        throw new Error(
+          upload.error ||
+          "Unable to create upload"
+        );
+      }
+
+      setProcessMessage(
+        "Uploading performance..."
+      );
+
+      await uploadVideo(
+        recordedFile,
+        upload.tusEndpoint,
+        percent => {
+          setProgress(
+            percent
+          );
+
+          setProcessMessage(
+            `Uploading performance — ${percent}%`
+          );
+        }
+      );
+
+      setStep(
+        1,
+        "complete"
+      );
+
+
+      /* STEP 2 */
+
+      setStep(
+        2,
+        "active"
+      );
+
+      setProcessMessage(
+        "Processing performance..."
+      );
+
+      const asset =
+        await waitForProcessedAsset(
+          upload.assetId
+        );
+
+      setStep(
+        2,
+        "complete"
+      );
+
+
+      /* STEP 3 */
+
+      setStep(
+        3,
+        "active"
+      );
+
+      setProcessMessage(
+        "The Banshee is preparing your release..."
+      );
+
+      const releaseResponse =
+        await fetch(
+          `${window.BANSHEE_CONFIG.apiBase}/api/release/prepare`,
+          {
+            method:"POST",
+
+            headers:{
+              "Content-Type":
+                "application/json"
+            },
+
+            body:JSON.stringify({
+              assetId:
+                asset.id,
+
+              artist:
+                walletAddress,
+
+              title,
+
+              supply,
+
+              price,
+
+              description:
+                document.getElementById(
+                  "releaseDescription"
+                ).value,
+
+              royalty:
+                Number(
+                  document.getElementById(
+                    "artistRoyalty"
+                  ).value
+                )
+            })
+          }
+        );
+
+      const prepared =
+        await releaseResponse.json();
+
+      if (!releaseResponse.ok) {
+        throw new Error(
+          prepared.error ||
+          "Unable to prepare release"
+        );
+      }
+
+      setProcessMessage(
+        "Approve your performance edition..."
+      );
+
+      const mint =
+        await createBansheeAsset(
+          prepared.release
+        );
+
+      setStep(
+        3,
+        "complete"
+      );
+
+
+      /* STEP 4 */
+
+      setStep(
+        4,
+        "active"
+      );
+
+      setProcessMessage(
+        "Preparing Banshee market..."
+      );
+
+      /*
+       * Wire the currently compiled BansheeHook
+       * createLaunch() call here.
+       *
+       * We intentionally do not invent the pool key,
+       * market token, or poolId.
+       */
+
+      await new Promise(
+        resolve =>
+          setTimeout(
+            resolve,
+            600
+          )
+      );
+
+      setStep(
+        4,
+        "complete"
+      );
+
+      setProgress(
+        100
+      );
+
+      setProcessMessage(
+        "Performance release created."
+      );
+
+      document.getElementById(
+        "releaseTokenId"
+      ).textContent =
+        `Asset #${mint.tokenId}`;
+
+      document.getElementById(
+        "releaseTxHash"
+      ).textContent =
+        `Transaction: ${mint.transactionHash}`;
+
+      document.getElementById(
+        "releaseResult"
+      ).classList.add(
+        "show"
+      );
+
+      showToast(
+        "Banshee release created"
+      );
+
+    } catch (error) {
+      console.error(error);
+
+      showToast(
+        error.shortMessage ||
+        error.message ||
+        "Release failed"
+      );
+
+      setProcessMessage(
+        error.shortMessage ||
+        error.message ||
+        "Release failed"
+      );
+    }
+  }
+
+
+  function uploadVideo(
+    file,
+    endpoint,
+    onProgress
+  ) {
+    return new Promise(
+      (resolve,reject) => {
+
+        const upload =
+          new tus.Upload(
+            file,
+            {
+              endpoint,
+
+              retryDelays:[
+                0,
+                1000,
+                3000,
+                5000
+              ],
+
+              metadata:{
+                filename:
+                  file.name,
+
+                filetype:
+                  file.type
+              },
+
+              onError:
+                reject,
+
+              onProgress:
+                (
+                  uploaded,
+                  total
+                ) => {
+
+                  const percent =
+                    total > 0
+                      ? Math.round(
+                          uploaded /
+                          total *
+                          100
+                        )
+                      : 0;
+
+                  onProgress(
+                    percent
+                  );
+                },
+
+              onSuccess:
+                () =>
+                  resolve(
+                    upload.url
+                  )
+            }
+          );
+
+        upload.start();
+      }
+    );
+  }
+
+
+  async function waitForProcessedAsset(
+    assetId
+  ) {
+    const timeout =
+      Date.now() +
+      180000;
+
+    while (
+      Date.now() <
+      timeout
+    ) {
+      const response =
+        await fetch(
+          `${window.BANSHEE_CONFIG.apiBase}/api/video/${assetId}`
+        );
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ||
+          "Unable to check performance"
+        );
+      }
+
+      const asset =
+        result.asset;
+
+      const phase =
+        typeof asset.status ===
+        "string"
+          ? asset.status
+          : asset.status?.phase;
+
+      if (
+        phase === "ready" ||
+        phase === "completed"
+      ) {
+        return asset;
+      }
+
+      if (
+        phase === "failed"
+      ) {
+        throw new Error(
+          "Performance processing failed"
+        );
+      }
+
+      await new Promise(
+        resolve =>
+          setTimeout(
+            resolve,
+            2500
+          )
+      );
+    }
+
+    throw new Error(
+      "Processing timed out"
+    );
+  }
+
+
+  async function createBansheeAsset(
+    release
+  ) {
+    const abi = [
+      "function tokenizeVideo(string livepeerAssetId,string playbackId,string metadataURI,uint256 supply) returns (uint256)",
+      "event VideoTokenized(uint256 indexed tokenId,address indexed artist,string livepeerAssetId,string playbackId,uint256 supply,string metadataURI)"
+    ];
+
+    const contract =
+      new ethers.Contract(
+        window.BANSHEE_CONFIG.bansheeVideo,
+        abi,
+        walletSigner
+      );
+
+    const transaction =
+      await contract.tokenizeVideo(
+        release.livepeerAssetId,
+        release.playbackId,
+        release.metadataURI,
+        release.supply
+      );
+
+    showToast(
+      "Waiting for confirmation..."
+    );
+
+    const receipt =
+      await transaction.wait();
+
+    let tokenId =
+      null;
+
+    for (
+      const log of
+      receipt.logs
+    ) {
+      try {
+        const parsed =
+          contract.interface.parseLog(
+            log
+          );
+
+        if (
+          parsed?.name ===
+          "VideoTokenized"
+        ) {
+          tokenId =
+            parsed.args.tokenId;
+
+          break;
+        }
+
+      } catch (_) {}
+    }
+
+    if (tokenId === null) {
+      throw new Error(
+        "Asset ID not found"
+      );
+    }
+
+    return {
+      tokenId:
+        tokenId.toString(),
+
+      transactionHash:
+        receipt.hash
+    };
+  }
+
+
+  function showToast(
+    message
+  ) {
+    const toast =
+      document.getElementById(
+        "toastPanel"
+      );
+
+    toast.textContent =
+      message;
+
+    toast.classList.add(
+      "show"
+    );
+
+    clearTimeout(
+      toastTimer
+    );
+
+    toastTimer =
+      setTimeout(
+        () => {
+          toast.classList.remove(
+            "show"
+          );
+        },
+        2600
+      );
+  }
+</script>
+
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+</body>
+</html>
