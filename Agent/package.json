@@ -1,0 +1,24 @@
+{
+  "name": "banshee-live-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "ethers": "^6.17.0",
+    "express": "^5.2.1",
+    "livepeer": "^3.5.0",
+    "multer": "^2.0.0",
+    "tus-js-client": "^4.3.1"
+  },
+  "description": "",
+  "main": "banshee-agent.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
