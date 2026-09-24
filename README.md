@@ -1,5 +1,7 @@
 # Banshee Music
 
+Demo: https://islandersfan2025.github.io/LivepeerBansheeAI/
+
 **Banshee is a music launchpad that turns songs, albums, tickets, and recorded performances into onchain music assets with their own markets.**
 
 Banshee gives artists a direct path from creating or releasing music to launching a tradable digital asset. Rather than treating music NFTs as static collectibles, Banshee combines **ERC-1155 music assets, Livepeer AI, Uniswap v4, BNB Chain, and onchain Proof-of-Performance** to create markets around an artist's work.
